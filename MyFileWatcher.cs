@@ -8,7 +8,7 @@ namespace FileWatching
 {
     public class MyFileWatcher : IMyFileWatcher
     {
-        private string _directoryName = Path.Join(Environment.CurrentDirectory, "files");
+        private string _directoryName = Path.Join(Environment.CurrentDirectory, "files");//change this to whatever you want
         private string _fileFilter = "*.*";
         FileSystemWatcher _fileSystemWatcher;
         ILogger<MyFileWatcher> _logger;
@@ -17,15 +17,14 @@ namespace FileWatching
         public MyFileWatcher(ILogger<MyFileWatcher> logger, IServiceProvider serviceProvider)
         {
             _logger = logger;
+            if(!Directory.Exists(_directoryName))
+                Directory.CreateDirectory(_directoryName);
             _fileSystemWatcher = new FileSystemWatcher(_directoryName, _fileFilter);
             _serviceProvider = serviceProvider;
         }
 
         public void Start()
         {
-            if (!Directory.Exists(_directoryName))
-                Directory.CreateDirectory(_directoryName);
-
             _fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes
                                  | NotifyFilters.CreationTime
                                  | NotifyFilters.DirectoryName
@@ -44,6 +43,8 @@ namespace FileWatching
 
             _fileSystemWatcher.EnableRaisingEvents = true;
             _fileSystemWatcher.IncludeSubdirectories = true;
+
+            _logger.LogInformation($"File Watching has started for directory {_directoryName}");
         }
 
         private void _fileSystemWatcher_Error(object sender, ErrorEventArgs e)
