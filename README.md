@@ -1,1 +1,1 @@
-# FileWatching
+# Example of a .Net background worker service using the SystemFileWatcher to watch a directory and consume the files(CSV) dropped there and doing a simple line read.
